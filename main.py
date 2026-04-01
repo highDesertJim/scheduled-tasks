@@ -1,38 +1,62 @@
-# To run and test the code you need to update 4 places:
-# 1. Change MY_EMAIL/MY_PASSWORD to your own details.
-# 2. Go to your email provider and make it allow less secure apps.
-# 3. Update the SMTP ADDRESS to match your email provider.
-# 4. Update birthdays.csv to contain today's month and day.
-# See the solution video in the 100 Days of Python Course for explainations.
-
-
-from datetime import datetime
-import pandas
-import random
+import pandas as pd
+import datetime as dt
+import glob as glob
+from random import choice
 import smtplib
-import os
 
-# import os and use it to get the Github repository secrets
-MY_EMAIL = os.environ.get("MY_EMAIL")
-MY_PASSWORD = os.environ.get("MY_PASSWORD")
+#-------------- email address and password ---------------------------------------
+my_email = "jdolce9@gmail.com"
+password = "zcir kjmv jlqw itqn"  #very important. Keep this password for future use
+#-----------------------------------------------------------------------------------
 
-today = datetime.now()
-today_tuple = (today.month, today.day)
+#------------------------------- Functions -----------------------------------------
+def get_random_letter():
+    """returns a random birthday letter"""
+    file_list = glob.glob('./letter_templates/*.txt')
+    random_birthday_wish = choice(file_list)
+    with open(random_birthday_wish, 'r') as letter:
+        return letter.read()
 
-data = pandas.read_csv("birthdays.csv")
-birthdays_dict = {(data_row["month"], data_row["day"])                  : data_row for (index, data_row) in data.iterrows()}
-if today_tuple in birthdays_dict:
-    birthday_person = birthdays_dict[today_tuple]
-    file_path = f"letter_templates/letter_{random.randint(1, 3)}.txt"
-    with open(file_path) as letter_file:
-        contents = letter_file.read()
-        contents = contents.replace("[NAME]", birthday_person["name"])
-
-    with smtplib.SMTP("YOUR EMAIL PROVIDER SMTP SERVER ADDRESS") as connection:
+def send_birthday_letter(letter, e_mail):
+    """sends birthday letter email"""
+    with smtplib.SMTP('smtp.gmail.com') as connection:
         connection.starttls()
-        connection.login(MY_EMAIL, MY_PASSWORD)
-        connection.sendmail(
-            from_addr=MY_EMAIL,
-            to_addrs=birthday_person["email"],
-            msg=f"Subject:Happy Birthday!\n\n{contents}"
-        )
+        connection.login(user=my_email, password=password)
+        connection.sendmail(from_addr=my_email,
+                            to_addrs=e_mail,
+                            msg= f"Subject: Happy Birthday\n\n{letter}")
+
+#--------------------------------------------------------------------------------------
+# get today's day and month for comparison
+now = dt.datetime.now()
+birthday_month = now.month
+birthday_day = now.day
+
+#load up the dataframe from the csv file
+birthday_df = pd.read_csv('birthdays.csv')
+
+#loop through the dataframe for anyone whose birthday matches today's month and day
+birthday_people = [{"name": str(row["name"]).title(),"email":row["email"]} for index, row in birthday_df.iterrows()
+                   if row.month == birthday_month and row.day == birthday_day]
+
+#loop through the list of people with birthdays today and send letter
+#yes, I could have done this from the for loop above, but it seemed
+#easier to have a collection of all who had a birthday
+for dic in birthday_people:
+    birthday_letter = get_random_letter()
+    letter_text = birthday_letter.replace("[NAME]", dic["name"])
+    send_birthday_letter(letter_text, dic["email"])
+
+##################### Extra Hard Starting Project ######################
+
+# 1. Update the birthdays.csv
+
+# 2. Check if today matches a birthday in the birthdays.csv
+
+# 3. If step 2 is true, pick a random letter from letter templates and replace the [NAME] with the person's actual name from birthdays.csv
+
+# 4. Send the letter generated in step 3 to that person's email address.
+
+
+
+
