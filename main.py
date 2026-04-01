@@ -5,11 +5,11 @@ import glob as glob
 from random import choice
 import smtplib
 
-#-------------- email address and password ---------------------------------------
-my_email = "jdolce9@gmail.com"
-password = "zcir kjmv jlqw itqn"  #very important. Keep this password for future use
-#-----------------------------------------------------------------------------------
 
+
+#-----------------------------------------------------------------------------------
+MY_EMAIL = os.environ.get("MY_EMAIL")
+password = os.environ.get("MY_PASSWORD")
 #------------------------------- Functions -----------------------------------------
 def get_random_letter():
     """returns a random birthday letter"""
