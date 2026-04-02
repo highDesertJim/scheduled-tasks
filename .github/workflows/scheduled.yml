@@ -23,7 +23,7 @@ jobs:
 
   run:
     runs-on: ubuntu-latest
-      Set FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true
+      
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
