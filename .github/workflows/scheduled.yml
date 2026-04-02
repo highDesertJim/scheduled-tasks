@@ -20,9 +20,10 @@ on:
   workflow_dispatch:
 
 jobs:
+
   run:
     runs-on: ubuntu-latest
-
+      Set FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -39,7 +40,6 @@ jobs:
 
       - name: Run script
         env:
-          Set FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true
           # Your secrets are available as environment variables
           # Add more secrets in Settings > Secrets > Actions
           MY_EMAIL: ${{ secrets.MY_EMAIL }}
