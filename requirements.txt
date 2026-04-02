@@ -1,6 +1,5 @@
 pandas
-datetime 
-glob
+datetime
 random
 smtplib
 os
